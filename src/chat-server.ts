@@ -23,7 +23,7 @@ export class ChatServer {
     })
     app.post('/messages', (req, res)=>{
       try{
-        this.messageManager.addMessage(req.body);
+        this.messageManager.addMessage({...req.body});
         io.emit("message", req.body);
       } catch (err){
         console.log('error', err);

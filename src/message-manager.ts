@@ -1,5 +1,5 @@
 import {FixedSizeArray} from "./fixed-size-array";
-import {Message} from "./message";
+import {ClientMessage, Message} from "./message";
 
 
 export class MessagesManager {
@@ -11,12 +11,16 @@ export class MessagesManager {
         this.rooms = new Map();
     }
 
-    public addMessage(message: Message): void {
+    public addMessage(message: ClientMessage): void {
         if (!this.rooms.has(message.room)) {
             this.rooms.set(message.room, new FixedSizeArray<Message>(this.maxSize));
         }
         const roomMessages = this.rooms.get(message.room)!;
-        roomMessages.add(message);
+        roomMessages.add({...message, date: new Date().toISOString(), id: this.generateId()});
+    }
+
+    public generateId(): string {
+        return Math.random().toString(36).substr(2, 9);
     }
 
 
