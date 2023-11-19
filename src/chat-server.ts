@@ -4,6 +4,13 @@ import * as http from "http";
 import { Server } from "socket.io";
 import {MessagesManager} from "./message-manager";
 import bodyParser from "body-parser";
+import BadWordsNext from "bad-words-next";
+import xss from "xss";
+
+const en = require('bad-words-next/data/en.json');
+const ru = require('bad-words-next/data/ru.json');
+
+
 
 export class ChatServer {
 
@@ -20,10 +27,15 @@ export class ChatServer {
     app.get('/messages', (req, res)=>{
       return res.send(this.messageManager.getAllMessages())
     })
+
+    const badwords = new BadWordsNext({ data: en });
+    badwords.add(ru);
     app.post('/messages', (req, res)=>{
       try{
-        this.messageManager.addMessage({...req.body});
-        io.emit("message", req.body);
+        const message = xss(badwords.filter(req.body.message), {});
+        console.log({message});
+        this.messageManager.addMessage({...req.body, message});
+        io.emit("message", {...req.body, message});
       } catch (err){
         console.log('error', err);
         return res.status(400).end();
