@@ -33,9 +33,8 @@ export class ChatServer {
     app.post('/messages', (req, res)=>{
       try{
         const message = xss(badwords.filter(req.body.message), {});
-        console.log({message});
-        this.messageManager.addMessage({...req.body, message});
-        io.emit("message", {...req.body, message});
+        const object = this.messageManager.addMessage({...req.body, message});
+        io.emit("message", object);
       } catch (err){
         console.log('error', err);
         return res.status(400).end();

@@ -11,12 +11,14 @@ export class MessagesManager {
         this.rooms = new Map();
     }
 
-    public addMessage(message: ClientMessage): void {
+    public addMessage(message: ClientMessage) {
         if (!this.rooms.has(message.room)) {
             this.rooms.set(message.room, new FixedSizeArray<Message>(this.maxSize));
         }
         const roomMessages = this.rooms.get(message.room)!;
-        roomMessages.add({...message, date: new Date().toISOString(), id: this.generateId()});
+        const object = {...message, date: new Date().toISOString(), id: this.generateId()};
+        roomMessages.add(object);
+        return object;
     }
 
     public generateId(): string {
