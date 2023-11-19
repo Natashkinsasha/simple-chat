@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import * as http from "http";
 import { Server } from "socket.io";
-import {Message} from "./message";
 import {MessagesManager} from "./message-manager";
 import bodyParser from "body-parser";
 
@@ -42,8 +41,8 @@ export class ChatServer {
 
   private createApp() {
     const app = express();
-    app.use(cors());
     app.use(bodyParser.json())
+    app.use(cors());
     return app;
   }
 
