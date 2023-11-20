@@ -11,6 +11,10 @@ const en = require('bad-words-next/data/en.json');
 const ru = require('bad-words-next/data/ru.json');
 
 
+function replaceWebsiteNamesWithStars(text: string): string {
+  const websiteRegex = /(\b(?:https?:\/\/)?(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,}|\b[a-zA-Z0-9]+\.com\b|\b[a-zA-Z0-9]+\.ru\b)/gi;
+  return text.replace(websiteRegex, '***');
+}
 
 export class ChatServer {
 
@@ -32,7 +36,7 @@ export class ChatServer {
     badwords.add(ru);
     app.post('/messages', (req, res)=>{
       try{
-        const message = xss(badwords.filter(req.body.message), {});
+        const message = replaceWebsiteNamesWithStars(xss(badwords.filter(req.body.message), {}));
         const object = this.messageManager.addMessage({...req.body, message});
         io.emit("message", object);
       } catch (err){
